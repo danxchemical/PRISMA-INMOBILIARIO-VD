@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasador Inmobiliario · Barrancabermeja</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --negro:     #0D0D0D;
+    --carbon:    #1A1A1A;
+    --grafito:   #2C2C2C;
+    --humo:      #3D3D3D;
+    --gris-med:  #6B6B6B;
+    --gris-claro:#A8A8A8;
+    --borde:     #2E2E2E;
+    --fondo:     #111111;
+    --crema:     #F5F0E8;
+    --dorado:    #C9A84C;
+    --dorado-s:  #E8C46A;
+    --verde:     #2A6E4A;
+    --verde-s:   #3D9B68;
+    --rojo:      #8B2020;
+    --rojo-s:    #C0392B;
+    --blanco:    #FAFAFA;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --serif: 'Playfair Display', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--fondo);
+    color: var(--blanco);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ─────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 48px 60px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--borde);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, #1e1e1e 39px, #1e1e1e 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, #1e1e1e 39px, #1e1e1e 40px);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--dorado);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(42px, 6vw, 86px);
+    font-weight: 900;
+    line-height: 1.0;
+    color: var(--blanco);
+    max-width: 760px;
+  }
+  .hero h1 span { color: var(--dorado); }
+  .hero-sub {
+    margin-top: 24px;
+    font-size: 16px;
+    color: var(--gris-claro);
+    max-width: 520px;
+    line-height: 1.7;
+  }
+  .hero-cta {
+    margin-top: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--dorado);
+    color: var(--negro);
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 28px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .hero-cta:hover { background: var(--dorado-s); }
+  .hero-cta svg { width: 16px; height: 16px; }
+  .hero-stats {
+    position: absolute;
+    bottom: 40px; right: 48px;
+    display: flex; gap: 40px;
+  }
+  .stat-item { text-align: right; }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--dorado);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--gris-med);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── LAYOUT CALC ──────────────────────────────────────── */
+  .calc-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 48px;
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--dorado);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--blanco);
+    margin-bottom: 40px;
+  }
+
+  /* ── STEPPER ──────────────────────────────────────────── */
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 56px;
+    border: 1px solid var(--borde);
+    overflow: hidden;
+  }
+  .step-item {
+    flex: 1;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border-right: 1px solid var(--borde);
+    transition: background 0.2s;
+    background: var(--carbon);
+  }
+  .step-item:last-child { border-right: none; }
+  .step-item.active { background: var(--grafito); }
+  .step-item.done { background: var(--carbon); }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gris-med);
+    width: 22px; height: 22px;
+    border: 1px solid var(--borde);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-item.active .step-num {
+    background: var(--dorado);
+    color: var(--negro);
+    border-color: var(--dorado);
+  }
+  .step-item.done .step-num {
+    background: var(--verde);
+    color: #fff;
+    border-color: var(--verde);
+  }
+  .step-text {
+    font-size: 12px;
+    color: var(--gris-med);
+    line-height: 1.3;
+  }
+  .step-item.active .step-text { color: var(--blanco); }
+  .step-text strong { display: block; font-size: 13px; }
+
+  /* ── PANELS ───────────────────────────────────────────── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── FORM GRID ────────────────────────────────────────── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-grid.cols-1 { grid-template-columns: 1fr; }
+
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field.span-2 { grid-column: span 2; }
+
+  label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris-claro);
+    font-family: var(--mono);
+  }
+  label em {
+    font-style: normal;
+    color: var(--dorado);
+    margin-left: 4px;
+    font-size: 10px;
+  }
+
+  input[type="number"],
+  input[type="text"],
+  select {
+    background: var(--carbon);
+    border: 1px solid var(--borde);
+    color: var(--blanco);
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 12px 16px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input[type="number"]:focus,
+  input[type="text"]:focus,
+  select:focus { border-color: var(--dorado); }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6B6B' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; cursor: pointer; }
+  select option { background: var(--carbon); }
+
+  .field-hint {
+    font-size: 11px;
+    color: var(--gris-med);
+    line-height: 1.4;
+  }
+
+  /* ── RADIO CARDS ──────────────────────────────────────── */
+  .radio-group { display: flex; flex-direction: column; gap: 8px; }
+  .radio-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--borde);
+    background: var(--carbon);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .radio-card:hover { border-color: var(--humo); }
+  .radio-card.selected {
+    border-color: var(--dorado);
+    background: rgba(201,168,76,0.06);
+  }
+  .radio-card input[type="radio"] { display: none; }
+  .rc-dot {
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--gris-med);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  .radio-card.selected .rc-dot {
+    border-color: var(--dorado);
+  }
+  .radio-card.selected .rc-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 7px; height: 7px;
+    background: var(--dorado);
+    border-radius: 50%;
+  }
+  .rc-text { flex: 1; }
+  .rc-title { font-size: 14px; color: var(--blanco); line-height: 1.4; }
+  .rc-score {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gris-med);
+    margin-top: 2px;
+  }
+  .rc-score.pos { color: var(--verde-s); }
+  .rc-score.neg { color: var(--rojo-s); }
+  .rc-score.neu { color: var(--dorado); }
+
+  /* ── TIPOLOGÍA TOGGLE ─────────────────────────────────── */
+  .tipo-toggle {
+    display: flex;
+    border: 1px solid var(--borde);
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .tipo-btn {
+    flex: 1;
+    padding: 16px;
+    background: var(--carbon);
+    color: var(--gris-med);
+    border: none;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--borde);
+  }
+  .tipo-btn:last-child { border-right: none; }
+  .tipo-btn.active {
+    background: var(--grafito);
+    color: var(--blanco);
+  }
+  .tipo-btn span { display: block; font-size: 20px; margin-bottom: 4px; }
+
+  /* ── DIVIDER ──────────────────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: var(--borde);
+    margin: 32px 0;
+  }
+  .question-block { margin-bottom: 36px; }
+  .q-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--blanco);
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+  .q-sub {
+    font-size: 12px;
+    color: var(--gris-med);
+    margin-bottom: 14px;
+  }
+  .q-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    background: rgba(201,168,76,0.1);
+    color: var(--dorado);
+    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── NAV BUTTONS ──────────────────────────────────────── */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--borde);
+  }
+  .btn-prev, .btn-next, .btn-calc {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 14px 28px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-prev {
+    background: transparent;
+    color: var(--gris-med);
+    border: 1px solid var(--borde);
+  }
+  .btn-prev:hover { border-color: var(--gris-med); color: var(--blanco); }
+  .btn-next {
+    background: var(--dorado);
+    color: var(--negro);
+  }
+  .btn-next:hover { background: var(--dorado-s); }
+  .btn-calc {
+    background: var(--dorado);
+    color: var(--negro);
+    font-size: 15px;
+    padding: 16px 36px;
+  }
+  .btn-calc:hover { background: var(--dorado-s); }
+
+  /* ── RESULTADO ────────────────────────────────────────── */
+  #resultado { display: none; }
+  .result-header {
+    padding: 60px 48px 40px;
+    border-bottom: 1px solid var(--borde);
+    background: var(--carbon);
+  }
+  .result-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    color: var(--blanco);
+    margin-bottom: 8px;
+  }
+  .result-address {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gris-med);
+    letter-spacing: 0.1em;
+  }
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 48px;
+    gap: 32px;
+  }
+  .result-main {
+    grid-column: span 2;
+    background: var(--grafito);
+    border: 1px solid var(--borde);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-main::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--dorado), var(--dorado-s));
+  }
+  .result-main-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--dorado);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .result-precio {
+    font-family: var(--serif);
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 900;
+    color: var(--blanco);
+    line-height: 1;
+  }
+  .result-precio span {
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--gris-claro);
+    font-weight: 400;
+    vertical-align: super;
+    margin-right: 6px;
+  }
+  .result-m2 {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--gris-med);
+  }
+  .result-card {
+    background: var(--carbon);
+    border: 1px solid var(--borde);
+    padding: 28px;
+  }
+  .rc-card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gris-med);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .rc-card-val {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--dorado);
+  }
+  .rc-card-sub {
+    font-size: 12px;
+    color: var(--gris-med);
+    margin-top: 6px;
+  }
+
+  /* ── DESGLOSE ─────────────────────────────────────────── */
+  .desglose {
+    grid-column: span 2;
+    background: var(--carbon);
+    border: 1px solid var(--borde);
+    padding: 32px;
+  }
+  .desglose h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--gris-med);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .desglose-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+    font-size: 14px;
+  }
+  .desglose-row:last-child { border-bottom: none; }
+  .desglose-row .dr-name { color: var(--gris-claro); }
+  .desglose-row .dr-val {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--blanco);
+  }
+  .desglose-row.total .dr-name { color: var(--blanco); font-weight: 600; }
+  .desglose-row.total .dr-val { color: var(--dorado); font-size: 16px; }
+
+  /* ── ALERTAS ──────────────────────────────────────────── */
+  .alert-box {
+    grid-column: span 2;
+    padding: 20px 24px;
+    border-left: 3px solid var(--rojo-s);
+    background: rgba(139,32,32,0.1);
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .alert-box.warn {
+    border-left-color: var(--dorado);
+    background: rgba(201,168,76,0.08);
+  }
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
+  .alert-text { font-size: 13px; color: var(--gris-claro); line-height: 1.6; }
+  .alert-text strong { color: var(--blanco); display: block; margin-bottom: 4px; }
+
+  /* ── RECALCULAR ───────────────────────────────────────── */
+  .recalc-row {
+    grid-column: span 2;
+    display: flex; justify-content: center; padding-top: 8px;
+  }
+  .btn-recalc {
+    background: transparent;
+    border: 1px solid var(--borde);
+    color: var(--gris-med);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-recalc:hover { border-color: var(--dorado); color: var(--dorado); }
+
+  /* ── FOOTER ───────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--borde);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--dorado);
+  }
+  .footer-text {
+    font-size: 11px;
+    color: var(--gris-med);
+    max-width: 500px;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .footer-sources {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--humo);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* ── PROGRESS BAR ─────────────────────────────────────── */
+  .progress-track {
+    height: 2px;
+    background: var(--borde);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--dorado);
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* ── VALIDATION ───────────────────────────────────────── */
+  .field-error { border-color: var(--rojo-s) !important; }
+  .error-msg {
+    font-size: 11px;
+    color: var(--rojo-s);
+    margin-top: 4px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  @media (max-width: 768px) {
+    .hero { padding: 60px 24px 48px; }
+    .hero-stats { position: static; margin-top: 40px; flex-direction: row; gap: 28px; }
+    .calc-shell { padding: 48px 24px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid.cols-3 { grid-template-columns: 1fr; }
+    .field.span-2 { grid-column: span 1; }
+    .stepper { flex-direction: column; }
+    .step-item { border-right: none; border-bottom: 1px solid var(--borde); }
+    .result-grid { grid-template-columns: 1fr; padding: 32px 24px; }
+    .result-main, .desglose, .alert-box, .recalc-row { grid-column: span 1; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .footer-text { text-align: left; }
+    .footer-sources { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ── HERO ─────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-tag">Valoración Inmobiliaria · Barrancabermeja, Santander</div>
+  <h1>Calcula el valor<br>real de tu <span>inmueble.</span></h1>
+  <p class="hero-sub">Motor de valoración basado en el POT Acuerdo 033/2022, datos DANE, UNGRD y la Lonja de Propiedad Raíz de Santander. Algoritmo granular por barrio, no por comuna.</p>
+  <a href="#calculadora" class="hero-cta">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5A5.5 5.5 0 118 2.5a5.5 5.5 0 010 11zM7.25 5v3.44L5.47 10.22l1.06 1.06 2-2a.75.75 0 00.22-.53V5H7.25z"/></svg>
+    Iniciar tasación
+  </a>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">37+</div>
+      <div class="stat-label">Barrios</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Comunas</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">V5.0</div>
+      <div class="stat-label">Algoritmo</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CALCULADORA ───────────────────────────────────────────────────────── -->
+<section id="calculadora" class="calc-shell">
+  <div class="section-label">Herramienta de valoración</div>
+  <div class="section-title">Datos del inmueble</div>
+
+  <!-- STEPPER -->
+  <div class="stepper">
+    <div class="step-item active" id="step-ind-1">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Ubicación</strong>Barrio y datos base</div>
+    </div>
+    <div class="step-item" id="step-ind-2">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>Inmueble</strong>Tipología y área</div>
+    </div>
+    <div class="step-item" id="step-ind-3">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>Características</strong>Matrices de valoración</div>
+    </div>
+    <div class="step-item" id="step-ind-4">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>Mercado</strong>Ciclo petrolero y arriendo</div>
+    </div>
+  </div>
+
+  <!-- ── PASO 1: UBICACIÓN ── -->
+  <div class="panel active" id="panel-1">
+    <div class="form-grid">
+      <div class="field">
+        <label>Comuna <em>requerido</em></label>
+        <select id="comunaSelect" onchange="onComunaChange()">
+          <option value="">— Selecciona una comuna —</option>
+          <option value="1">Comuna 1 — Centro y Sector Logístico</option>
+          <option value="2">Comuna 2 — Zona Residencial Premium</option>
+          <option value="3">Comuna 3 — Sectores Populares / Geotécnico</option>
+          <option value="4">Comuna 4 — Clase Media Comercial</option>
+          <option value="5">Comuna 5 — Clase Media Emergente</option>
+          <option value="6">Comuna 6 — Popular Industrial</option>
+          <option value="7">Comuna 7 — Expansión Periférica</option>
+        </select>
+        <div class="error-msg" id="err-comuna">Selecciona una comuna.</div>
+      </div>
+      <div class="field">
+        <label>Barrio <em>requerido</em></label>
+        <select id="barrioSelect" onchange="onBarrioChange()" disabled>
+          <option value="">— Primero selecciona una comuna —</option>
+        </select>
+        <div class="error-msg" id="err-barrio">Selecciona un barrio.</div>
+      </div>
+    </div>
+
+    <div id="barrio-info" style="display:none; margin-top:20px;">
+      <div class="result-card" style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+        <div>
+          <div class="rc-card-label">V. Base por m²</div>
+          <div class="rc-card-val" id="info-vbase">—</div>
+          <div class="rc-card-sub" id="info-estrato">—</div>
+        </div>
+        <div>
+          <div class="rc-card-label">Factor Geográfico (Fc)</div>
+          <div class="rc-card-val" id="info-fc">—</div>
+          <div class="rc-card-sub" id="info-comuna-nombre">—</div>
+        </div>
+        <div>
+          <div class="rc-card-label">Legalización</div>
+          <div class="rc-card-val" id="info-legal" style="font-size:18px;">—</div>
+          <div class="rc-card-sub" id="info-legal-sub">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <div></div>
+      <button class="btn-next" onclick="goStep(2)">Siguiente — Inmueble →</button>
+    </div>
+  </div>
+
+  <!-- ── PASO 2: INMUEBLE ── -->
+  <div class="panel" id="panel-2">
+    <div class="tipo-toggle">
+      <button class="tipo-btn active" id="btn-casa" onclick="setTipo('casa')">
+        <span>🏠</span>Casa / Lote
+      </button>
+      <button class="tipo-btn" id="btn-apto" onclick="setTipo('apartamento')">
+        <span>🏢</span>Apartamento
+      </button>
+    </div>
+
+    <div class="form-grid cols-3">
+      <div class="field">
+        <label>Área construida (m²) <em>requerido</em></label>
+        <input type="number" id="area" placeholder="Ej: 120" min="10" max="2000">
+        <div class="error-msg" id="err-area">Ingresa el área en m².</div>
+      </div>
+      <div class="field">
+        <label>Antigüedad del inmueble</label>
+        <select id="antiguedad">
+          <option value="1.00">0 – 5 años (nueva / óptima)</option>
+          <option value="0.92">6 – 15 años (desgaste intermedio)</option>
+          <option value="0.80">Más de 15 años sin remodelación</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estrato DANE</label>
+        <select id="estrato">
+          <option value="1">Estrato 1</option>
+          <option value="2">Estrato 2</option>
+          <option value="3" selected>Estrato 3</option>
+          <option value="4">Estrato 4</option>
+          <option value="5">Estrato 5</option>
+          <option value="6">Estrato 6</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- MÓDULO APARTAMENTO -->
+    <div id="mod-apto" style="display:none;">
+      <div class="divider"></div>
+      <div class="q-badge">Módulo Propiedad Horizontal</div>
+      <div class="question-block">
+        <div class="q-label">¿En qué piso está el apartamento?</div>
+        <div class="q-sub">El último piso recibe radiación directa de la losa — impacto real en costos de A/C.</div>
+        <div class="radio-group">
+          <label class="radio-card selected" onclick="selectRadio(this,'phPiso','intermedio')">
+            <input type="radio" name="phPiso" value="1" checked>
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Piso 1 al 3 (intermedios o bajos)</div>
+              <div class="rc-score pos">Pi = +1 · Menor carga térmica, sombra de estructuras vecinas</div>
+            </div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this,'phPiso','ultimo')">
+            <input type="radio" name="phPiso" value="-2">
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Último piso del edificio</div>
+              <div class="rc-score neg">Pi = −2 · Duplica consumo de aire acondicionado</div>
+            </div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this,'phPiso','alto-ascensor')">
+            <input type="radio" name="phPiso" value="1">
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Piso 4 o superior CON ascensor operativo</div>
+              <div class="rc-score pos">Pi = +1 · Accesibilidad garantizada</div>
+            </div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this,'phPiso','alto-sin')">
+            <input type="radio" name="phPiso" value="-2">
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Piso 4 o superior SIN ascensor</div>
+              <div class="rc-score neg">Pi = −2 · Reduce demanda efectiva significativamente</div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">¿El edificio tiene planta eléctrica?</div>
+        <div class="q-sub">Los cortes de energía en Barrancabermeja son frecuentes — el respaldo eléctrico es determinante.</div>
+        <div class="radio-group">
+          <label class="radio-card selected" onclick="selectRadio(this,'phPlanta','total')">
+            <input type="radio" name="phPlanta" value="2" checked>
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Planta eléctrica de cobertura total (comunes + apartamentos)</div>
+              <div class="rc-score pos">Pi = +2</div>
+            </div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this,'phPlanta','parcial')">
+            <input type="radio" name="phPlanta" value="0">
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Solo áreas comunes o sin planta eléctrica</div>
+              <div class="rc-score neu">Pi = 0</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÓDULO CASA -->
+    <div id="mod-casa">
+      <div class="divider"></div>
+      <div class="q-badge">Módulo Terreno y Patio</div>
+      <div class="question-block">
+        <div class="q-label">¿Cómo es el patio o terreno libre?</div>
+        <div class="q-sub">El clima tropical de Barrancabermeja hace que el patio sea un factor de confort y valor real.</div>
+        <div class="radio-group">
+          <label class="radio-card selected" onclick="selectRadio(this,'patio','arbol')">
+            <input type="radio" name="patio" value="1" checked>
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Patio con árboles frutales o sombrío natural robusto</div>
+              <div class="rc-score pos">Pi = +1 · Barrera térmica natural</div>
+            </div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this,'patio','pavi')">
+            <input type="radio" name="patio" value="0">
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Patio pavimentado en cemento o baldosas estándar</div>
+              <div class="rc-score neu">Pi = 0 · Promedio funcional del sector</div>
+            </div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this,'patio','piscina')">
+            <input type="radio" name="patio" value="2">
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Patio con piscina privada en mampostería</div>
+              <div class="rc-score pos">Pi = +2 · Máximo estatus comercial en clima tropical</div>
+            </div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this,'patio','maleza')">
+            <input type="radio" name="patio" value="-1">
+            <div class="rc-dot"></div>
+            <div class="rc-text">
+              <div class="rc-title">Terreno sin encerrar, tierra viva o maleza</div>
+              <div class="rc-score neg">Pi = −1 · Atrae plagas, vulnerabilidad de seguridad</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-prev" onclick="goStep(1)">← Anterior</button>
+      <button class="btn-next" onclick="goStep(3)">Siguiente — Características →</button>
+    </div>
+  </div>
+
+  <!-- ── PASO 3: CARACTERÍSTICAS ── -->
+  <div class="panel" id="panel-3">
+
+    <!-- M1: CLIMATIZACIÓN -->
+    <div class="question-block">
+      <div class="q-badge">Matriz 1 · Peso 20%</div>
+      <div class="q-label">¿Qué tipo de red eléctrica y climatización tiene el inmueble?</div>
+      <div class="q-sub">La red eléctrica define si el inmueble puede soportar Aires acondicionados — necesidad real en Barrancabermeja, no lujo.</div>
+      <div class="radio-group">
+        <label class="radio-card" onclick="selectRadio(this,'m1','mono')">
+          <input type="radio" name="m1" value="-2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Red monofásica antigua — no soporta A/C sin caerse</div>
+            <div class="rc-score neg">Pi = −2</div>
+          </div>
+        </label>
+        <label class="radio-card selected" onclick="selectRadio(this,'m1','bi')">
+          <input type="radio" name="m1" value="0" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Red bifásica o trifásica básica estándar</div>
+            <div class="rc-score neu">Pi = 0</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m1','tri')">
+          <input type="radio" name="m1" value="2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Red trifásica con ductos internos listos y Mini-Splits instalados</div>
+            <div class="rc-score pos">Pi = +2</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- M2: ESTACIONAMIENTO -->
+    <div class="question-block">
+      <div class="q-badge">Matriz 2 · Peso 15%</div>
+      <div class="q-label">¿Con qué espacio para vehículos cuenta la propiedad?</div>
+      <div class="q-sub">El calor directo deteriora vehículos. Un parqueadero techado es una ventaja comercial diferenciadora.</div>
+      <div class="radio-group">
+        <label class="radio-card" onclick="selectRadio(this,'m2','sin')">
+          <input type="radio" name="m2" value="-2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Sin parqueadero privado — vehículo en vía pública al sol</div>
+            <div class="rc-score neg">Pi = −2</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m2','motos')">
+          <input type="radio" name="m2" value="1">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Porche cerrado para 2–3 motos (válido en comunas populares)</div>
+            <div class="rc-score pos">Pi = +1</div>
+          </div>
+        </label>
+        <label class="radio-card selected" onclick="selectRadio(this,'m2','desc')">
+          <input type="radio" name="m2" value="0" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Parqueadero descubierto dentro del predio</div>
+            <div class="rc-score neu">Pi = 0</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m2','techado')">
+          <input type="radio" name="m2" value="2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Parqueadero techado (losa / teja termoacústica) o subterráneo</div>
+            <div class="rc-score pos">Pi = +2</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- M3: AGUA -->
+    <div class="question-block">
+      <div class="q-badge">Matriz 3 · Peso 15%</div>
+      <div class="q-label">¿Cómo maneja el inmueble la presión e intermitencia del agua?</div>
+      <div class="q-sub">El acueducto de Barrancabermeja tiene intermitencias frecuentes. La reserva hidráulica es un diferenciador de valor real.</div>
+      <div class="radio-group">
+        <label class="radio-card" onclick="selectRadio(this,'m3','sin')">
+          <input type="radio" name="m3" value="-2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Sin tanques — dependencia directa y exclusiva del acueducto</div>
+            <div class="rc-score neg">Pi = −2</div>
+          </div>
+        </label>
+        <label class="radio-card selected" onclick="selectRadio(this,'m3','elevado')">
+          <input type="radio" name="m3" value="0" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Tanque elevado tradicional en el techo</div>
+            <div class="rc-score neu">Pi = 0</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m3','completo')">
+          <input type="radio" name="m3" value="2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Sistema completo: tanque subterráneo + motobomba + hidroneumático</div>
+            <div class="rc-score pos">Pi = +2</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- M4: ORIENTACIÓN -->
+    <div class="question-block">
+      <div class="q-badge">Matriz 4 · Peso 15%</div>
+      <div class="q-label">¿Hacia qué punto cardinal mira la fachada principal?</div>
+      <div class="q-sub">En latitud ecuatorial, una fachada occidental genera costos adicionales de energía de hasta el 40% vs. fachada norte.</div>
+      <div class="radio-group">
+        <label class="radio-card selected" onclick="selectRadio(this,'m4','norte')">
+          <input type="radio" name="m4" value="2" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Norte o Nororiente — más fresca durante el día</div>
+            <div class="rc-score pos">Pi = +2</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m4','sur')">
+          <input type="radio" name="m4" value="1">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Sur o Suroriente</div>
+            <div class="rc-score pos">Pi = +1</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m4','occidente')">
+          <input type="radio" name="m4" value="-1">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Occidente / Poniente — sol pesado de tarde directo</div>
+            <div class="rc-score neg">Pi = −1</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m4','oriente')">
+          <input type="radio" name="m4" value="0">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Oriente — sol de mañana, tarde más fresca</div>
+            <div class="rc-score neu">Pi = 0</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- M5: MATERIALES -->
+    <div class="question-block">
+      <div class="q-badge">Matriz 5 · Peso 10%</div>
+      <div class="q-label">¿Cuál es el material dominante en los pisos?</div>
+      <div class="radio-group">
+        <label class="radio-card" onclick="selectRadio(this,'m5','cemento')">
+          <input type="radio" name="m5" value="-2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Cemento rústico, baldosas rotas o alfombras gastadas</div>
+            <div class="rc-score neg">Pi = −2</div>
+          </div>
+        </label>
+        <label class="radio-card selected" onclick="selectRadio(this,'m5','ceramica')">
+          <input type="radio" name="m5" value="0" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Baldosa común o cerámica tradicional</div>
+            <div class="rc-score neu">Pi = 0</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m5','porcelana')">
+          <input type="radio" name="m5" value="2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Porcelanato o mármol pulido — materiales fríos al tacto</div>
+            <div class="rc-score pos">Pi = +2</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- M6: AMENIDADES -->
+    <div class="question-block">
+      <div class="q-badge">Matriz 6 · Peso 25%</div>
+      <div class="q-label">¿La propiedad está en calle abierta o conjunto cerrado?</div>
+      <div class="q-sub">Esta variable tiene el mayor peso del modelo: la diferencia entre calle abierta y conjunto cerrado puede representar hasta un 35% en precio de venta en Barrancabermeja.</div>
+      <div class="radio-group">
+        <label class="radio-card selected" onclick="selectRadio(this,'m6','abierta')">
+          <input type="radio" name="m6" value="0" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Calle abierta tradicional — sin zonas comunes ni vigilancia</div>
+            <div class="rc-score neu">Pi = 0</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'m6','conjunto')">
+          <input type="radio" name="m6" value="2">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Conjunto cerrado con vigilancia 24/7, cámaras y acceso a piscinas activas</div>
+            <div class="rc-score pos">Pi = +2</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-prev" onclick="goStep(2)">← Anterior</button>
+      <button class="btn-next" onclick="goStep(4)">Siguiente — Mercado →</button>
+    </div>
+  </div>
+
+  <!-- ── PASO 4: MERCADO ── -->
+  <div class="panel" id="panel-4">
+
+    <div class="question-block">
+      <div class="q-badge">Factor Ft · Ciclo Refinería de Barrancabermeja</div>
+      <div class="q-label">¿Cuál es el ciclo económico actual de la industria petrolera local?</div>
+      <div class="q-sub">El mercado inmobiliario de Barrancabermeja está indexado a la actividad de la Refinería Ecopetrol. Este factor puede modificar el precio final hasta en ±12%.</div>
+      <div class="radio-group">
+        <label class="radio-card" onclick="selectRadio(this,'ft','bonanza')">
+          <input type="radio" name="ft" value="1.12">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Bonanza Petrolera — paradas de planta, contratos EPC activos, alta ocupación hotelera de técnicos foráneos</div>
+            <div class="rc-score pos">Ft = 1.12 (+12%)</div>
+          </div>
+        </label>
+        <label class="radio-card selected" onclick="selectRadio(this,'ft','estable')">
+          <input type="radio" name="ft" value="1.00" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Mercado Estable — operación estándar de la refinería</div>
+            <div class="rc-score neu">Ft = 1.00 (neutro)</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'ft','recesion')">
+          <input type="radio" name="ft" value="0.88">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Recesión / Baja Actividad — reducción de operaciones, contratos suspendidos, Brent &lt; USD 55/barril por 60+ días</div>
+            <div class="rc-score neg">Ft = 0.88 (−12%)</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="question-block">
+      <div class="q-label">¿El inmueble se ofrecerá amoblado para ejecutivos?</div>
+      <div class="q-sub">Aplica si el inmueble tiene A/C en todas las estancias + línea blanca completa, orientado al mercado corporativo y personal técnico de Ecopetrol.</div>
+      <div class="radio-group">
+        <label class="radio-card selected" onclick="selectRadio(this,'amoblado','no')">
+          <input type="radio" name="amoblado" value="0" checked>
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">No — inmueble sin amueblar o amoblado básico</div>
+            <div class="rc-score neu">Factor adicional: 0%</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'amoblado','basico')">
+          <input type="radio" name="amoblado" value="0.30">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Sí — amoblado ejecutivo básico (A/C en alcobas + nevera)</div>
+            <div class="rc-score pos">Factor arriendo: +30%</div>
+          </div>
+        </label>
+        <label class="radio-card" onclick="selectRadio(this,'amoblado','completo')">
+          <input type="radio" name="amoblado" value="0.50">
+          <div class="rc-dot"></div>
+          <div class="rc-text">
+            <div class="rc-title">Sí — amoblado ejecutivo completo (A/C en todas las estancias + línea blanca + TV)</div>
+            <div class="rc-score pos">Factor arriendo: +50%</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-prev" onclick="goStep(3)">← Anterior</button>
+      <button class="btn-calc" onclick="calcular()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+        Calcular valor del inmueble
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESULTADO ─────────────────────────────────────────────────────────── -->
+<section id="resultado">
+  <div class="result-header">
+    <div class="result-title">Valoración del inmueble</div>
+    <div class="result-address" id="res-address">—</div>
+  </div>
+
+  <div class="result-grid">
+    <!-- PRECIO PRINCIPAL -->
+    <div class="result-main">
+      <div class="result-main-label">Precio estimado de venta</div>
+      <div class="result-precio"><span>COP</span><span id="res-precio">—</span></div>
+      <div class="result-m2" id="res-m2">— COP/m²</div>
+    </div>
+
+    <!-- TARJETA ARRIENDO -->
+    <div class="result-card">
+      <div class="rc-card-label">Canon de arriendo mensual estimado</div>
+      <div class="rc-card-val" id="res-arriendo">—</div>
+      <div class="rc-card-sub" id="res-arriendo-sub">Tasa de rendimiento según estrato</div>
+    </div>
+
+    <!-- TARJETA ARRIENDO AMOBLADO -->
+    <div class="result-card" id="card-amoblado" style="display:none;">
+      <div class="rc-card-label">Canon amoblado ejecutivo</div>
+      <div class="rc-card-val" id="res-arriendo-amb">—</div>
+      <div class="rc-card-sub">Con factor de amoblado aplicado</div>
+    </div>
+
+    <!-- ALERTA INUNDACIÓN -->
+    <div class="alert-box" id="alert-inundacion" style="display:none;">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-text">
+        <strong>Zona con condición de riesgo hídrico</strong>
+        Este inmueble se encuentra en un sector con historial o registro de inundación. El algoritmo ha aplicado el factor de ajuste correspondiente. Se recomienda verificar el estado del predio con la Secretaría de Planeación Municipal antes de formalizar cualquier transacción.
+      </div>
+    </div>
+
+    <!-- ALERTA LEGALIZACIÓN -->
+    <div class="alert-box warn" id="alert-legal" style="display:none;">
+      <div class="alert-icon">📋</div>
+      <div class="alert-text">
+        <strong>Inmueble con proceso de legalización pendiente</strong>
+        Los predios en estado informal o en proceso no son elegibles para créditos de vivienda VIS/No VIS en entidades bancarias colombianas. Esto reduce la liquidez de mercado del inmueble. Verifique el estado en la Oficina de Registro de Instrumentos Públicos.
+      </div>
+    </div>
+
+    <!-- DESGLOSE -->
+    <div class="desglose">
+      <h3>Desglose del cálculo · Precio_Venta_Final = (V_Base × Área) × (1 + Σ PᵢWᵢ) × Fc × Fa × Fs × Ft</h3>
+      <div class="desglose-row">
+        <span class="dr-name">Barrio / Valor base por m²</span>
+        <span class="dr-val" id="dr-vbase">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Área construida</span>
+        <span class="dr-val" id="dr-area">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Precio base (V_Base × Área)</span>
+        <span class="dr-val" id="dr-base">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Factor amenidades Σ(PᵢWᵢ) → multiplicador</span>
+        <span class="dr-val" id="dr-amenidades">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Factor Geográfico Fc</span>
+        <span class="dr-val" id="dr-fc">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Factor Antigüedad Fa</span>
+        <span class="dr-val" id="dr-fa">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Factor Entorno Fs (interno)</span>
+        <span class="dr-val" id="dr-fs">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Factor Petrolero Ft</span>
+        <span class="dr-val" id="dr-ft">—</span>
+      </div>
+      <div class="desglose-row">
+        <span class="dr-name">Factor Tipología (patio/PH)</span>
+        <span class="dr-val" id="dr-tipo">—</span>
+      </div>
+      <div class="desglose-row total">
+        <span class="dr-name">PRECIO VENTA FINAL</span>
+        <span class="dr-val" id="dr-total">—</span>
+      </div>
+    </div>
+
+    <!-- RECALCULAR -->
+    <div class="recalc-row">
+      <button class="btn-recalc" onclick="resetCalc()">← Hacer otra valoración</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-logo">Tasador BCM</div>
+  <div class="footer-text">
+    Herramienta de estimación referencial. Los valores calculados no constituyen avalúo técnico certificado ni reemplazan la opinión de un perito inmobiliario matriculado. Para avalúos con validez legal, acuda a la Lonja de Propiedad Raíz de Santander, sede Barrancabermeja.
+  </div>
+  <div class="footer-sources">
+    POT Acuerdo 033/2022<br>
+    DANE · UNGRD · CAS · IGAC<br>
+    SIEDCO · Catastro Multipropósito<br>
+    Algoritmo V5.0 · 2026
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+// BASE DE DATOS COMPLETA — 37 BARRIOS
+// ══════════════════════════════════════════════════════════════════════════
+const DB = {
+  "Centro":              { comuna:1, estrato:4, vbase:2300000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Colombia":            { comuna:1, estrato:3, vbase:2100000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Pueblo Nuevo":        { comuna:1, estrato:3, vbase:2100000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Arenal":              { comuna:1, estrato:1, vbase:1100000, fs:3, riesgoInund:"fluvial", riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Cardales":            { comuna:1, estrato:1, vbase:1050000, fs:3, riesgoInund:"critico", riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Isla del Zapato":     { comuna:1, estrato:1, vbase:850000,  fs:4, riesgoInund:"critico", riesgoRemov:"no",     legal:"EnProceso",  fc:1.15 },
+  "Las Playas":          { comuna:1, estrato:1, vbase:1100000, fs:3, riesgoInund:"fluvial", riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Sector Comercial":    { comuna:1, estrato:3, vbase:2200000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Muelle":              { comuna:1, estrato:2, vbase:1400000, fs:3, riesgoInund:"parcial", riesgoRemov:"no",     legal:"Legal",      fc:1.15 },
+  "Parnaso":             { comuna:2, estrato:5, vbase:2700000, fs:1, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.35 },
+  "El Recreo Norte":     { comuna:2, estrato:5, vbase:2650000, fs:1, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.35 },
+  "Torcoroma":           { comuna:2, estrato:4, vbase:2400000, fs:1, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.35 },
+  "Galán Gómez":         { comuna:2, estrato:4, vbase:2350000, fs:1, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.35 },
+  "Olaya Herrera":       { comuna:2, estrato:4, vbase:2300000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.35 },
+  "Ciudad Bolívar":      { comuna:2, estrato:3, vbase:1900000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:1.35 },
+  "Jerusalén":           { comuna:3, estrato:1, vbase:1100000, fs:4, riesgoInund:"pluvial", riesgoRemov:"ladera", legal:"EnProceso",  fc:0.75 },
+  "Cristo Rey":          { comuna:3, estrato:2, vbase:1250000, fs:3, riesgoInund:"no",      riesgoRemov:"parcial",legal:"Legal",      fc:0.75 },
+  "San Silvestre":       { comuna:3, estrato:2, vbase:1350000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.75 },
+  "Altos del Campestre": { comuna:3, estrato:3, vbase:1600000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.75 },
+  "Colinas del Norte":   { comuna:3, estrato:1, vbase:1000000, fs:4, riesgoInund:"pluvial", riesgoRemov:"critico",legal:"Informal",   fc:0.75 },
+  "La Esperanza":        { comuna:3, estrato:2, vbase:1300000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.75 },
+  "Cincuentenario":      { comuna:4, estrato:3, vbase:1800000, fs:2, riesgoInund:"pluvial", riesgoRemov:"no",     legal:"Legal",      fc:0.95 },
+  "El Castillo":         { comuna:4, estrato:3, vbase:1750000, fs:2, riesgoInund:"no",      riesgoRemov:"parcial",legal:"Legal",      fc:0.95 },
+  "El Palmar":           { comuna:4, estrato:3, vbase:1700000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.95 },
+  "Bella Vista":         { comuna:4, estrato:2, vbase:1450000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.95 },
+  "Primero de Mayo":     { comuna:5, estrato:3, vbase:1850000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.90 },
+  "Chapinero":           { comuna:5, estrato:2, vbase:1400000, fs:3, riesgoInund:"mitigado",riesgoRemov:"no",     legal:"Legal",      fc:0.90 },
+  "Nueva Esperanza":     { comuna:5, estrato:1, vbase:1200000, fs:3, riesgoInund:"mitigado",riesgoRemov:"no",     legal:"Legal",      fc:0.90 },
+  "Altos de Cañaveral":  { comuna:5, estrato:3, vbase:1750000, fs:2, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.90 },
+  "Boston":              { comuna:6, estrato:2, vbase:1300000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.80 },
+  "Las Granjas":         { comuna:6, estrato:2, vbase:1350000, fs:3, riesgoInund:"pluvial", riesgoRemov:"no",     legal:"Legal",      fc:0.80 },
+  "El Danubio":          { comuna:6, estrato:2, vbase:1300000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.80 },
+  "San Marino":          { comuna:6, estrato:1, vbase:1150000, fs:4, riesgoInund:"no",      riesgoRemov:"no",     legal:"EnProceso",  fc:0.80 },
+  "Sector Pozo Siete":   { comuna:6, estrato:1, vbase:900000,  fs:4, riesgoInund:"critico", riesgoRemov:"no",     legal:"Informal",   fc:0.80 },
+  "Villarelys":          { comuna:7, estrato:2, vbase:1300000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.70 },
+  "Campestre":           { comuna:7, estrato:2, vbase:1350000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.70 },
+  "Ciudadela Educativa": { comuna:7, estrato:2, vbase:1400000, fs:3, riesgoInund:"no",      riesgoRemov:"no",     legal:"Legal",      fc:0.70 },
+};
+
+const BARRIOS_POR_COMUNA = {
+  1: ["Centro","Colombia","Pueblo Nuevo","Arenal","Cardales","Isla del Zapato","Las Playas","Sector Comercial","Muelle"],
+  2: ["Parnaso","El Recreo Norte","Torcoroma","Galán Gómez","Olaya Herrera","Ciudad Bolívar"],
+  3: ["Jerusalén","Cristo Rey","San Silvestre","Altos del Campestre","Colinas del Norte","La Esperanza"],
+  4: ["Cincuentenario","El Castillo","El Palmar","Bella Vista"],
+  5: ["Primero de Mayo","Chapinero","Nueva Esperanza","Altos de Cañaveral"],
+  6: ["Boston","Las Granjas","El Danubio","San Marino","Sector Pozo Siete"],
+  7: ["Villarelys","Campestre","Ciudadela Educativa"],
+};
+
+const FS_MAP = { 1: 1.10, 2: 1.00, 3: 0.90, 4: 0.75 };
+
+// ── Estado ────────────────────────────────────────────────────────────────
+let currentStep = 1;
+let tipologia = 'casa';
+
+// ── Formateo ──────────────────────────────────────────────────────────────
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('es-CO');
+}
+
+// ── Progress ──────────────────────────────────────────────────────────────
+function updateProgress(step) {
+  document.getElementById('progressFill').style.width = ((step / 4) * 100) + '%';
+}
+
+// ── Navegación por pasos ──────────────────────────────────────────────────
+function goStep(n) {
+  if (n > currentStep) {
+    if (!validateStep(currentStep)) return;
+  }
+  document.getElementById('panel-' + currentStep).classList.remove('active');
+  document.getElementById('step-ind-' + currentStep).classList.remove('active');
+  if (n > currentStep) document.getElementById('step-ind-' + currentStep).classList.add('done');
+
+  currentStep = n;
+  document.getElementById('panel-' + currentStep).classList.add('active');
+  document.getElementById('step-ind-' + currentStep).classList.add('active');
+  updateProgress(n);
+  document.getElementById('calculadora').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Validación por paso ───────────────────────────────────────────────────
+function validateStep(step) {
+  if (step === 1) {
+    const c = document.getElementById('comunaSelect').value;
+    const b = document.getElementById('barrioSelect').value;
+    let ok = true;
+    if (!c) { showErr('err-comuna', 'comunaSelect'); ok = false; }
+    else hideErr('err-comuna', 'comunaSelect');
+    if (!b) { showErr('err-barrio', 'barrioSelect'); ok = false; }
+    else hideErr('err-barrio', 'barrioSelect');
+    return ok;
+  }
+  if (step === 2) {
+    const a = document.getElementById('area').value;
+    if (!a || parseFloat(a) < 10) { showErr('err-area', 'area'); return false; }
+    hideErr('err-area', 'area');
+    return true;
+  }
+  return true;
+}
+function showErr(eid, fid) {
+  document.getElementById(eid).classList.add('show');
+  document.getElementById(fid).classList.add('field-error');
+}
+function hideErr(eid, fid) {
+  document.getElementById(eid).classList.remove('show');
+  document.getElementById(fid).classList.remove('field-error');
+}
+
+// ── Selectores ────────────────────────────────────────────────────────────
+function onComunaChange() {
+  const c = parseInt(document.getElementById('comunaSelect').value);
+  const sel = document.getElementById('barrioSelect');
+  sel.innerHTML = '<option value="">— Selecciona un barrio —</option>';
+  sel.disabled = !c;
+  document.getElementById('barrio-info').style.display = 'none';
+  if (!c) return;
+  (BARRIOS_POR_COMUNA[c] || []).forEach(b => {
+    const o = document.createElement('option');
+    o.value = b; o.textContent = b;
+    sel.appendChild(o);
+  });
+}
+
+function onBarrioChange() {
+  const b = document.getElementById('barrioSelect').value;
+  if (!b || !DB[b]) { document.getElementById('barrio-info').style.display='none'; return; }
+  const d = DB[b];
+  document.getElementById('info-vbase').textContent = fmt(d.vbase) + '/m²';
+  document.getElementById('info-estrato').textContent = 'Estrato DANE ' + d.estrato;
+  document.getElementById('info-fc').textContent = d.fc.toFixed(2);
+  const cnames = {1:'Centro/Logístico',2:'Premium Resid.',3:'Popular/Geotécnico',4:'Clase Media Com.',5:'Clase Media Emerg.',6:'Popular Industrial',7:'Expansión Periférica'};
+  document.getElementById('info-comuna-nombre').textContent = 'C' + d.comuna + ' · ' + (cnames[d.comuna]||'');
+  const lmap = { Legal: '✅ Legal', EnProceso: '⚠️ En proceso', Informal: '🔴 Informal' };
+  const lsub = { Legal: 'Bancarizable', EnProceso: 'Revisar titulación', Informal: 'No bancarizable' };
+  document.getElementById('info-legal').textContent = lmap[d.legal] || d.legal;
+  document.getElementById('info-legal-sub').textContent = lsub[d.legal] || '';
+  document.getElementById('barrio-info').style.display = 'block';
+  // Sync estrato select
+  document.getElementById('estrato').value = d.estrato;
+}
+
+// ── Tipología ─────────────────────────────────────────────────────────────
+function setTipo(t) {
+  tipologia = t;
+  document.getElementById('btn-casa').classList.toggle('active', t==='casa');
+  document.getElementById('btn-apto').classList.toggle('active', t==='apartamento');
+  document.getElementById('mod-casa').style.display = t==='casa' ? 'block' : 'none';
+  document.getElementById('mod-apto').style.display = t==='apartamento' ? 'block' : 'none';
+}
+
+// ── Radio cards ───────────────────────────────────────────────────────────
+function selectRadio(label, name, key) {
+  document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+    r.closest('.radio-card').classList.remove('selected');
+  });
+  label.classList.add('selected');
+  label.querySelector('input[type="radio"]').checked = true;
+}
+
+function getRadioVal(name) {
+  const r = document.querySelector(`input[name="${name}"]:checked`);
+  return r ? parseFloat(r.value) : 0;
+}
+
+// ── CÁLCULO PRINCIPAL ────────────────────────────────────────────────────
+function calcular() {
+  if (!validateStep(4)) return;
+
+  const barrio = document.getElementById('barrioSelect').value;
+  if (!barrio || !DB[barrio]) { alert('Por favor selecciona un barrio válido.'); return; }
+
+  const d = DB[barrio];
+  const area = parseFloat(document.getElementById('area').value);
+  const Fa = parseFloat(document.getElementById('antiguedad').value);
+  const estrato = parseInt(document.getElementById('estrato').value);
+  const Ft = getRadioVal('ft');
+  const Fs = FS_MAP[d.fs];
+  const Fc = d.fc;
+  const vbase = d.vbase;
+
+  // Sumatoria amenidades Σ(Pi × Wi)
+  const m1 = getRadioVal('m1') * 0.20;
+  const m2 = getRadioVal('m2') * 0.15;
+  const m3 = getRadioVal('m3') * 0.15;
+  const m4 = getRadioVal('m4') * 0.15;
+  const m5 = getRadioVal('m5') * 0.10;
+  const m6 = getRadioVal('m6') * 0.25;
+  const sumPiWi = m1 + m2 + m3 + m4 + m5 + m6;
+
+  // Factor tipología
+  let ftipo = 0;
+  if (tipologia === 'casa') {
+    ftipo = getRadioVal('patio') * 0.10;
+  } else {
+    const phPiso  = getRadioVal('phPiso')  * 0.10;
+    const phPlanta = getRadioVal('phPlanta') * 0.05;
+    ftipo = phPiso + phPlanta;
+  }
+
+  const amenidadesMult = 1 + sumPiWi + ftipo;
+
+  // Precio base
+  const precioBase = vbase * area;
+
+  // Penalizaciones de inundación
+  let penInund = 1.0;
+  if (d.riesgoInund === 'critico') penInund = 0.60;
+  else if (d.riesgoInund === 'fluvial' || d.riesgoInund === 'pluvial') penInund = 0.85;
+  else if (d.riesgoInund === 'parcial') penInund = 0.92;
+  else if (d.riesgoInund === 'mitigado') penInund = 0.97;
+
+  // Penalización remoción
+  let penRemov = 1.0;
+  if (d.riesgoRemov === 'critico') penRemov = 0.70;
+  else if (d.riesgoRemov === 'ladera') penRemov = 0.85;
+  else if (d.riesgoRemov === 'parcial') penRemov = 0.93;
+
+  // PRECIO FINAL
+  const precioFinal = precioBase * amenidadesMult * Fc * Fa * Fs * Ft * penInund * penRemov;
+
+  // ARRIENDO
+  const tasa = estrato <= 3 ? 0.006 : 0.0075;
+  const canonBase = precioFinal * tasa;
+  const factAmob = getRadioVal('amoblado');
+  const canonAmob = canonBase * (1 + factAmob);
+
+  // ── MOSTRAR RESULTADO ──────────────────────────────────────────────────
+  document.getElementById('calculadora').style.display = 'none';
+  const resEl = document.getElementById('resultado');
+  resEl.style.display = 'block';
+  resEl.scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('res-address').textContent =
+    barrio + ' · Comuna ' + d.comuna + ' · Estrato ' + d.estrato + ' · ' + tipologia.charAt(0).toUpperCase() + tipologia.slice(1);
+
+  document.getElementById('res-precio').textContent = fmt(precioFinal).replace('$','');
+  document.getElementById('res-m2').textContent = fmt(precioFinal / area) + ' por m²';
+  document.getElementById('res-arriendo').textContent = fmt(canonBase) + '/mes';
+  document.getElementById('res-arriendo-sub').textContent =
+    'Tasa ' + (tasa * 100).toFixed(2) + '% mensual · Estrato ' + estrato;
+
+  if (factAmob > 0) {
+    document.getElementById('card-amoblado').style.display = 'block';
+    document.getElementById('res-arriendo-amb').textContent = fmt(canonAmob) + '/mes';
+  } else {
+    document.getElementById('card-amoblado').style.display = 'none';
+  }
+
+  // Alertas
+  document.getElementById('alert-inundacion').style.display =
+    (d.riesgoInund !== 'no') ? 'flex' : 'none';
+  document.getElementById('alert-legal').style.display =
+    (d.legal !== 'Legal') ? 'flex' : 'none';
+
+  // Desglose
+  document.getElementById('dr-vbase').textContent = barrio + ' · ' + fmt(vbase) + '/m²';
+  document.getElementById('dr-area').textContent = area + ' m²';
+  document.getElementById('dr-base').textContent = fmt(precioBase);
+  document.getElementById('dr-amenidades').textContent =
+    'Σ=' + sumPiWi.toFixed(3) + ' → ×' + amenidadesMult.toFixed(3);
+  document.getElementById('dr-fc').textContent = Fc.toFixed(2);
+  document.getElementById('dr-fa').textContent = Fa.toFixed(2);
+  document.getElementById('dr-fs').textContent = Fs.toFixed(2) + ' (Nivel ' + d.fs + ')';
+  document.getElementById('dr-ft').textContent = Ft.toFixed(2);
+  const tipoLabel = tipologia === 'casa'
+    ? 'Patio Pi=' + getRadioVal('patio') + ' → ×' + (1 + ftipo).toFixed(3)
+    : 'PH (piso+planta) → ×' + (1 + ftipo).toFixed(3);
+  document.getElementById('dr-tipo').textContent = tipoLabel;
+  document.getElementById('dr-total').textContent = fmt(precioFinal);
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────
+function resetCalc() {
+  document.getElementById('resultado').style.display = 'none';
+  document.getElementById('calculadora').style.display = 'block';
+  // Reset steps
+  for (let i=1;i<=4;i++) {
+    document.getElementById('panel-'+i).classList.remove('active');
+    document.getElementById('step-ind-'+i).classList.remove('active','done');
+  }
+  currentStep = 1;
+  document.getElementById('panel-1').classList.add('active');
+  document.getElementById('step-ind-1').classList.add('active');
+  updateProgress(1);
+  document.getElementById('calculadora').scrollIntoView({ behavior:'smooth' });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+setTipo('casa');
+updateProgress(1);
+</script>
+</body>
+</html>
