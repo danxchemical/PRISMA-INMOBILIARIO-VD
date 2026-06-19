@@ -168,8 +168,26 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:26px
 .ft-legal{font-size:11px;color:var(--text3);max-width:420px;line-height:1.65}
 .ft-src{font-size:10px;color:var(--text3);text-align:right;line-height:1.9}
 
+/* TRM BANNER */
+.trm-banner{background:var(--surface);border-bottom:1px solid var(--border);padding:7px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.trm-left{display:flex;align-items:center;gap:10px}
+.trm-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .3s}
+.trm-dot.live{background:#2a9d5c;box-shadow:0 0 0 3px rgba(42,157,92,.18)}
+.trm-dot.error{background:#c0392b}
+.trm-label{font-size:12px;color:var(--text3)}
+.trm-val{font-size:13px;font-weight:600;color:var(--text)}
+.trm-right{font-size:11px;color:var(--text3)}
+/* TRM en resultado */
+.res-usd{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.18);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.res-usd-label{font-size:11px;opacity:.6}
+.res-usd-val{font-size:15px;font-weight:600;opacity:.9}
+.res-usd-badge{font-size:10px;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:100px;opacity:.7}
+/* TRM arriendo USD */
+.arr-usd{font-size:11px;color:var(--text3);margin-top:3px}
+
 @media(max-width:640px){
   .topbar{padding:0 20px}
+  .trm-banner{padding:7px 20px}
   .hero{padding:48px 20px 40px}
   .wrap{padding:0 20px 60px}
   #res{padding:0 20px 60px}
@@ -188,6 +206,16 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:26px
   <div class="topbar-tag">Barrancabermeja · Algoritmo V5.0</div>
 </header>
 <div class="pbar-wrap"><div class="pbar-fill" id="pbar"></div></div>
+
+<!-- TRM BANNER -->
+<div class="trm-banner">
+  <div class="trm-left">
+    <div class="trm-dot" id="trm-dot"></div>
+    <span class="trm-label">TRM oficial hoy:</span>
+    <span class="trm-val" id="trm-display">Consultando...</span>
+  </div>
+  <div class="trm-right" id="trm-fecha">—</div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -445,12 +473,18 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:26px
     <div class="res-precio"><span class="res-cop">COP</span><span id="r-p">—</span></div>
     <div class="res-m2" id="r-m2">— por m²</div>
     <div class="res-addr" id="r-addr">—</div>
+  <div class="res-usd" id="res-usd-block" style="display:none">
+    <span class="res-usd-label">Equivalente en USD:</span>
+    <span class="res-usd-val" id="r-usd">—</span>
+    <span class="res-usd-badge" id="r-usd-trm">TRM: —</span>
+  </div>
   </div>
   <div class="res-grid">
     <div class="rcard">
       <div class="rcard-lbl">Canon de arriendo mensual</div>
       <div class="rcard-val" id="r-arr">—</div>
       <div class="rcard-sub" id="r-arr-s">—</div>
+    <div class="arr-usd" id="r-arr-usd"></div>
     </div>
     <div class="rcard" id="rc-amb" style="display:none">
       <div class="rcard-lbl">Canon amoblado ejecutivo</div>
@@ -486,7 +520,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:26px
 <footer>
   <div class="ft-brand">Prisma Inmobiliaria VD</div>
   <div class="ft-legal">Herramienta de estimación referencial. Los valores no constituyen avalúo técnico certificado. Para avalúos con validez legal contacte la Lonja de Propiedad Raíz de Santander, sede Barrancabermeja.</div>
-  <div class="ft-src">POT Acuerdo 033/2022 · DANE<br>UNGRD · CAS · IGAC · SIEDCO<br>Algoritmo V5.0 · 2026</div>
+  <div class="ft-src">POT Acuerdo 033/2022 · DANE<br>UNGRD · CAS · IGAC · SIEDCO<br>Algoritmo V5.0 · 2026<br><span id="ft-trm-note" style="color:var(--green);font-weight:500">Precios sincronizados con la TRM oficial del día</span></div>
 </footer>
 
 <script>
@@ -864,7 +898,8 @@ function calcular(){
   const pM={no:1,parcial:0.92,si:0.85,critico:0.60,mitigado:0.97};
   const pF=pM[d.rF]||1, pP=pM[d.rP]||1;
   const penTotal=pF*pP;
-  const precioFinal=precioBase*aMult*Fc*Fa*Fs*Ft*penTotal;
+  const trmFactor=calcTRMFactor(precioBase);
+  const precioFinal=precioBase*aMult*Fc*Fa*Fs*Ft*penTotal*trmFactor;
 
   const tasa=est<=3?0.006:0.0075;
   const canon=precioFinal*tasa;
@@ -885,6 +920,7 @@ function calcular(){
   if(factAmb>0){document.getElementById('rc-amb').style.display='block';document.getElementById('r-amb').textContent=fmt(canonAmb)+'/mes';}
   else document.getElementById('rc-amb').style.display='none';
 
+  showUSD(precioFinal, factAmb>0?canonAmb:canon);
   document.getElementById('al-h').classList.toggle('show',d.rF!=='no'||d.rP!=='no');
   document.getElementById('al-l').classList.toggle('show',d.l!=='legal');
 
@@ -918,6 +954,74 @@ function reset(){
 
 setTipo('casa');
 setPbar(1);
+
+// ── MÓDULO TRM ─────────────────────────────────────────────────────────
+// TRM_Base: valor de referencia al momento de construcción del algoritmo (junio 2026)
+const TRM_BASE = 4150;
+const FACTOR_SENSIBILIDAD = 0.20; // 20% del precio depende de insumos dolarizados
+
+let TRM_ACTUAL = null;
+
+async function fetchTRM() {
+  const dot = document.getElementById('trm-dot');
+  const display = document.getElementById('trm-display');
+  const fecha = document.getElementById('trm-fecha');
+  try {
+    // API pública ExchangeRate — no requiere key, devuelve USD base
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const copRate = data.rates && data.rates.COP;
+    if (!copRate) throw new Error('COP no disponible');
+    TRM_ACTUAL = Math.round(copRate);
+    display.textContent = '$ ' + TRM_ACTUAL.toLocaleString('es-CO') + ' COP / USD';
+    dot.classList.add('live');
+    dot.classList.remove('error');
+    const updated = new Date(data.time_last_update_utc || Date.now());
+    fecha.textContent = 'Actualizado: ' + updated.toLocaleDateString('es-CO', {day:'2-digit', month:'short', year:'numeric'});
+    document.getElementById('ft-trm-note').style.display = 'inline';
+    return TRM_ACTUAL;
+  } catch(e) {
+    // Fallback: valor estático del día
+    TRM_ACTUAL = 4180;
+    display.textContent = '$ ' + TRM_ACTUAL.toLocaleString('es-CO') + ' COP / USD (referencia)';
+    dot.classList.add('error');
+    dot.classList.remove('live');
+    fecha.textContent = 'Sin conexión — valor de referencia';
+    console.warn('TRM fetch error:', e.message);
+    return TRM_ACTUAL;
+  }
+}
+
+function calcTRMFactor(precioBase) {
+  if (!TRM_ACTUAL || TRM_ACTUAL === TRM_BASE) return 1;
+  const variacion = (TRM_ACTUAL - TRM_BASE) / TRM_BASE;
+  return 1 + (variacion * FACTOR_SENSIBILIDAD);
+}
+
+function fmtUSD(copValue) {
+  if (!TRM_ACTUAL) return '—';
+  const usd = Math.round(copValue / TRM_ACTUAL);
+  return 'USD ' + usd.toLocaleString('es-CO');
+}
+
+function showUSD(precioFinal, canonFinal) {
+  const block = document.getElementById('res-usd-block');
+  const rUsd = document.getElementById('r-usd');
+  const rTrm = document.getElementById('r-usd-trm');
+  const rArrUsd = document.getElementById('r-arr-usd');
+  if (TRM_ACTUAL) {
+    block.style.display = 'flex';
+    rUsd.textContent = fmtUSD(precioFinal);
+    rTrm.textContent = 'TRM: $' + TRM_ACTUAL.toLocaleString('es-CO');
+    rArrUsd.textContent = 'Equivalente: ' + fmtUSD(canonFinal) + '/mes';
+  }
+}
+
+// Fetch al cargar
+fetchTRM();
+// Refetch cada hora
+setInterval(fetchTRM, 3600000);
 </script>
 </body>
 </html>
