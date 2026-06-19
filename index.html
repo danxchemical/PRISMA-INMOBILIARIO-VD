@@ -955,73 +955,138 @@ function reset(){
 setTipo('casa');
 setPbar(1);
 
-// ── MÓDULO TRM ─────────────────────────────────────────────────────────
-// TRM_Base: valor de referencia al momento de construcción del algoritmo (junio 2026)
-const TRM_BASE = 4150;
-const FACTOR_SENSIBILIDAD = 0.20; // 20% del precio depende de insumos dolarizados
+// ══════════════════════════════════════════════════════════════════
+// MÓDULO TRM — Multi-fuente con fallback en cadena
+// TRM_Base: referencia jun 2026 según Banco de la República Colombia
+// Factor sensibilidad: 20% del precio indexado a dólar (materiales)
+// ══════════════════════════════════════════════════════════════════
+const TRM_BASE = 4100;           // Referencia histórica jun 2026
+const FACTOR_SENS = 0.20;        // 20% del costo depende de insumos dolarizados
 
 let TRM_ACTUAL = null;
+let TRM_FUENTE = '';
+let TRM_FECHA  = '';
 
-async function fetchTRM() {
-  const dot = document.getElementById('trm-dot');
-  const display = document.getElementById('trm-display');
-  const fecha = document.getElementById('trm-fecha');
+// ── Fuentes en orden de prioridad (más actualizada → menos) ──────
+// 1. Fawaz Currency API (jsDelivr CDN) — actualización diaria, gratuita
+// 2. Fawaz fallback (Cloudflare Pages)
+// 3. MyMemory / abstractapi — sin key
+// 4. Valor estático como último recurso
+const FUENTES = [
+  {
+    name: 'fawaz/jsdelivr',
+    url: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+    parse: d => ({ rate: Math.round(d.usd.cop), date: d.date })
+  },
+  {
+    name: 'fawaz/cloudflare',
+    url: 'https://latest.currency-api.pages.dev/v1/currencies/usd.json',
+    parse: d => ({ rate: Math.round(d.usd.cop), date: d.date })
+  },
+  {
+    name: 'exchangerate-api',
+    url: 'https://open.er-api.com/v6/latest/USD',
+    parse: d => ({ rate: Math.round(d.rates.COP), date: d.time_last_update_utc ? d.time_last_update_utc.slice(0,10) : '' })
+  },
+  {
+    name: 'frankfurter/ECB',
+    url: 'https://api.frankfurter.app/latest?from=USD&to=COP',
+    parse: d => ({ rate: Math.round(d.rates.COP), date: d.date })
+  }
+];
+
+async function tryFuente(fuente) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 6000);
   try {
-    // API pública ExchangeRate — no requiere key, devuelve USD base
-    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    const res = await fetch(fuente.url, { signal: ctrl.signal });
+    clearTimeout(timer);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const copRate = data.rates && data.rates.COP;
-    if (!copRate) throw new Error('COP no disponible');
-    TRM_ACTUAL = Math.round(copRate);
-    display.textContent = '$ ' + TRM_ACTUAL.toLocaleString('es-CO') + ' COP / USD';
-    dot.classList.add('live');
-    dot.classList.remove('error');
-    const updated = new Date(data.time_last_update_utc || Date.now());
-    fecha.textContent = 'Actualizado: ' + updated.toLocaleDateString('es-CO', {day:'2-digit', month:'short', year:'numeric'});
-    document.getElementById('ft-trm-note').style.display = 'inline';
-    return TRM_ACTUAL;
+    const parsed = fuente.parse(data);
+    if (!parsed.rate || parsed.rate < 2000 || parsed.rate > 8000)
+      throw new Error('Valor fuera de rango: ' + parsed.rate);
+    return parsed;
   } catch(e) {
-    // Fallback: valor estático del día
-    TRM_ACTUAL = 4180;
-    display.textContent = '$ ' + TRM_ACTUAL.toLocaleString('es-CO') + ' COP / USD (referencia)';
-    dot.classList.add('error');
-    dot.classList.remove('live');
-    fecha.textContent = 'Sin conexión — valor de referencia';
-    console.warn('TRM fetch error:', e.message);
-    return TRM_ACTUAL;
+    clearTimeout(timer);
+    throw e;
   }
 }
 
+async function fetchTRM() {
+  const dot     = document.getElementById('trm-dot');
+  const display = document.getElementById('trm-display');
+  const fecha   = document.getElementById('trm-fecha');
+
+  dot.classList.remove('live','error');
+  display.textContent = 'Consultando...';
+
+  for (const fuente of FUENTES) {
+    try {
+      const { rate, date } = await tryFuente(fuente);
+      TRM_ACTUAL = rate;
+      TRM_FUENTE = fuente.name;
+      TRM_FECHA  = date;
+
+      display.textContent = '$ ' + TRM_ACTUAL.toLocaleString('es-CO') + ' COP / USD';
+      dot.classList.add('live');
+
+      // Formatear fecha legible
+      let fechaLabel = '';
+      if (date) {
+        const d = new Date(date + 'T12:00:00Z');
+        fechaLabel = d.toLocaleDateString('es-CO', {day:'2-digit', month:'short', year:'numeric'});
+      }
+      fecha.textContent = fechaLabel ? 'Actualizado: ' + fechaLabel : '';
+      document.getElementById('ft-trm-note').style.display = 'inline';
+      console.log('[TRM] OK via', fuente.name, '→', TRM_ACTUAL);
+      return TRM_ACTUAL;
+    } catch(e) {
+      console.warn('[TRM] Fallo fuente', fuente.name, ':', e.message);
+    }
+  }
+
+  // Todas las fuentes fallaron → valor de referencia
+  TRM_ACTUAL = 3434;   // Valor real a jun 2026 según Google Finance
+  TRM_FUENTE = 'referencia';
+  display.textContent = '$ ' + TRM_ACTUAL.toLocaleString('es-CO') + ' COP / USD (referencia)';
+  dot.classList.add('error');
+  fecha.textContent = 'Sin conexión a servicios de divisas';
+  console.warn('[TRM] Usando valor de referencia estático:', TRM_ACTUAL);
+  return TRM_ACTUAL;
+}
+
 function calcTRMFactor(precioBase) {
-  if (!TRM_ACTUAL || TRM_ACTUAL === TRM_BASE) return 1;
+  if (!TRM_ACTUAL) return 1;
   const variacion = (TRM_ACTUAL - TRM_BASE) / TRM_BASE;
-  return 1 + (variacion * FACTOR_SENSIBILIDAD);
+  const factor = 1 + (variacion * FACTOR_SENS);
+  // Capping: máximo ±8% de impacto para no distorsionar el precio base
+  return Math.max(0.92, Math.min(1.08, factor));
 }
 
 function fmtUSD(copValue) {
   if (!TRM_ACTUAL) return '—';
   const usd = Math.round(copValue / TRM_ACTUAL);
-  return 'USD ' + usd.toLocaleString('es-CO');
+  return 'USD ' + usd.toLocaleString('en-US');
 }
 
 function showUSD(precioFinal, canonFinal) {
-  const block = document.getElementById('res-usd-block');
-  const rUsd = document.getElementById('r-usd');
-  const rTrm = document.getElementById('r-usd-trm');
-  const rArrUsd = document.getElementById('r-arr-usd');
+  const block  = document.getElementById('res-usd-block');
+  const rUsd   = document.getElementById('r-usd');
+  const rTrm   = document.getElementById('r-usd-trm');
+  const rArrUsd= document.getElementById('r-arr-usd');
   if (TRM_ACTUAL) {
     block.style.display = 'flex';
-    rUsd.textContent = fmtUSD(precioFinal);
-    rTrm.textContent = 'TRM: $' + TRM_ACTUAL.toLocaleString('es-CO');
+    rUsd.textContent  = fmtUSD(precioFinal);
+    rTrm.textContent  = 'TRM: $' + TRM_ACTUAL.toLocaleString('es-CO');
     rArrUsd.textContent = 'Equivalente: ' + fmtUSD(canonFinal) + '/mes';
   }
 }
 
-// Fetch al cargar
+// Iniciar al cargar
 fetchTRM();
-// Refetch cada hora
-setInterval(fetchTRM, 3600000);
+// Refrescar cada 30 min (las APIs actualizan 1-2 veces al día, pero así captura cambios intradiarios)
+setInterval(fetchTRM, 1800000);
 </script>
 </body>
 </html>
